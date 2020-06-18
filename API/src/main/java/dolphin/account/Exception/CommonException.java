@@ -13,7 +13,11 @@ public interface CommonException {
         /**
          * 记录不存在
          */
-        RECORD_NOT_EXIST( ExceptionConstant.COMMON_MODULE_CODE + "00", "记录不存在");
+        RECORD_NOT_EXIST( ExceptionConstant.COMMON_MODULE_CODE + "00", "记录不存在"),
+        /**
+         * 数据库错误
+         */
+        DB_ERROR( ExceptionConstant.COMMON_MODULE_CODE + "01", "数据库错误：%s");
 
         /**
          * 状态码

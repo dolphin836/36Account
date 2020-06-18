@@ -25,4 +25,11 @@ public class BusinessException extends RuntimeException {
         this.code    = ExceptionConstant.APP_EXCEPTION_CODE + exception.getCode();
         this.message = exception.getMessage();
     }
+
+    public BusinessException (ExceptionCodeDefine exception, String ... message) {
+        super(exception.getMessage());
+
+        this.code    = ExceptionConstant.APP_EXCEPTION_CODE + exception.getCode();
+        this.message = String.format(exception.getMessage(), message);
+    }
 }
