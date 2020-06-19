@@ -13,7 +13,15 @@ public interface MemberException {
         /**
          * 用户名重复
          */
-        USERNAME_REPEAT( ExceptionConstant.MEMBER_MODULE_CODE + "00", "用户名 %s 已经被注册");
+        USERNAME_REPEAT( ExceptionConstant.MEMBER_MODULE_CODE + "00", "用户名 %s 已经被注册"),
+        /**
+         * 用户名重复
+         */
+        USERNAME_NOT_EXIST( ExceptionConstant.MEMBER_MODULE_CODE + "01", "用户 %s 不存在"),
+        /**
+         * 用户名重复
+         */
+        PASSWORD_ERROR( ExceptionConstant.MEMBER_MODULE_CODE + "02", "密码错误");
 
         /**
          * 状态码

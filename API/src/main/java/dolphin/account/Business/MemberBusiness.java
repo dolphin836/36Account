@@ -13,4 +13,11 @@ public interface MemberBusiness {
      * @return MemberIdResponse
      */
     MemberIdResponse memberSignUp (MemberSignUpRequest request);
+
+    /**
+     * 用户登录
+     * @param  request 登录信息
+     * @return MemberIdResponse
+     */
+    MemberIdResponse memberSignIn (MemberSignUpRequest request);
 }

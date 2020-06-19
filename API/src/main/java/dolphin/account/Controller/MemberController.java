@@ -30,4 +30,15 @@ public class MemberController {
     {
         return Response.success(memberBusiness.memberSignUp(request));
     }
+
+    /**
+     * 登录
+     * @param  request 登录信息
+     * @return MemberIdResponse
+     */
+    @PostMapping("signin")
+    public Response<MemberIdResponse> memberSignIn (@RequestBody @Validated MemberSignUpRequest request)
+    {
+        return Response.success(memberBusiness.memberSignIn(request));
+    }
 }

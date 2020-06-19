@@ -62,4 +62,33 @@ public class MemberBusinessImpl implements MemberBusiness {
 
         return memberIdResponse;
     }
+
+    /**
+     * 用户登录
+     * @param  request 登录信息
+     * @return MemberIdResponse
+     */
+    @Override
+    public MemberIdResponse memberSignIn(MemberSignUpRequest request) {
+        String username = request.getUsername();
+        Member member   = memberRepository.findByUsername(username);
+        // 用户不存在
+        if (null == member) {
+            throw new BusinessException(MemberException.ExceptionCode.USERNAME_NOT_EXIST, username);
+        }
+        // 密码验证
+        String enPassword             = member.getPassword();
+        String password               = request.getPassword();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(CommonConstant.PASSWORD_HASH_LENGTH);
+        boolean isPass                = encoder.matches(password, enPassword);
+
+        if (! isPass) {
+            throw new BusinessException(MemberException.ExceptionCode.PASSWORD_ERROR);
+        }
+
+        MemberIdResponse memberIdResponse = new MemberIdResponse();
+        memberIdResponse.setMemberId(member.getId());
+
+        return memberIdResponse;
+    }
 }
