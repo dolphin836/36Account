@@ -14,4 +14,9 @@ public class ExceptionConstant {
      * Common 模块异常码
      */
     public static final String COMMON_MODULE_CODE = "00";
+
+    /**
+     * Member 模块异常码
+     */
+    public static final String MEMBER_MODULE_CODE = "01";
 }

@@ -3,6 +3,7 @@ package dolphin.account.Business;
 import dolphin.account.Entity.Member;
 import dolphin.account.Exception.Common.BusinessException;
 import dolphin.account.Exception.CommonException;
+import dolphin.account.Exception.MemberException;
 import dolphin.account.Repository.MemberRepository;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberIdResponse;
@@ -29,6 +30,13 @@ public class MemberBusinessImpl implements MemberBusiness {
      */
     @Override
     public MemberIdResponse memberSignUp (MemberSignUpRequest request) {
+        String username  = request.getUsername();
+        boolean isExists = memberRepository.existsMemberByUsername(username);
+        // 用户名已存在
+        if (isExists) {
+            throw new BusinessException(MemberException.ExceptionCode.USERNAME_REPEAT, username);
+        }
+
         Member member = new Member();
         member.setUsername(request.getUsername());
         member.setPassword(request.getPassword());
