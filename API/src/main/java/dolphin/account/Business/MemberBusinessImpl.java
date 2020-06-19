@@ -6,6 +6,7 @@ import dolphin.account.Exception.CommonException;
 import dolphin.account.Repository.MemberRepository;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberIdResponse;
+import dolphin.account.Service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 public class MemberBusinessImpl implements MemberBusiness {
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private MemberService memberService;
 
     /**
      * 用户注册
@@ -28,8 +32,8 @@ public class MemberBusinessImpl implements MemberBusiness {
         Member member = new Member();
         member.setUsername(request.getUsername());
         member.setPassword(request.getPassword());
-        member.setClient((byte) 1);
-        member.setApplication((byte) 1);
+        // 设置客户端和应用
+        memberService.setMemberClientAndApplication(member);
 
         try {
             memberRepository.save(member);
