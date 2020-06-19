@@ -5,6 +5,7 @@ import dolphin.account.Entity.Member;
 import dolphin.account.Exception.Common.BusinessException;
 import dolphin.account.Exception.CommonException;
 import dolphin.account.Exception.MemberException;
+import dolphin.account.Library.RedisLibrary;
 import dolphin.account.Repository.MemberRepository;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberIdResponse;
@@ -23,6 +24,9 @@ public class MemberBusinessImpl implements MemberBusiness {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private RedisLibrary redis;
 
     /**
      * 用户注册
@@ -85,6 +89,11 @@ public class MemberBusinessImpl implements MemberBusiness {
         if (! isPass) {
             throw new BusinessException(MemberException.ExceptionCode.PASSWORD_ERROR);
         }
+
+        String cacheKey   = "member.token.1";
+        String cacheValue = "abc123";
+
+        redis.set(cacheKey, cacheValue);
 
         MemberIdResponse memberIdResponse = new MemberIdResponse();
         memberIdResponse.setMemberId(member.getId());
