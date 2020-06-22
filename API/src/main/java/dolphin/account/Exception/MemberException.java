@@ -15,13 +15,21 @@ public interface MemberException {
          */
         USERNAME_REPEAT( ExceptionConstant.MEMBER_MODULE_CODE + "00", "用户名 %s 已经被注册"),
         /**
-         * 用户名重复
+         * 用户名不存在
          */
         USERNAME_NOT_EXIST( ExceptionConstant.MEMBER_MODULE_CODE + "01", "用户 %s 不存在"),
         /**
-         * 用户名重复
+         * 密码错误
          */
-        PASSWORD_ERROR( ExceptionConstant.MEMBER_MODULE_CODE + "02", "密码错误");
+        PASSWORD_ERROR( ExceptionConstant.MEMBER_MODULE_CODE + "02", "密码错误"),
+        /**
+         * Token 不存在
+         */
+        TOKEN_NOT_EXIST( ExceptionConstant.MEMBER_MODULE_CODE + "03", "Token 不存在"),
+        /**
+         * 用户名不存在
+         */
+        USER_NOT_EXIST( ExceptionConstant.MEMBER_MODULE_CODE + "04", "用户不存在");
 
         /**
          * 状态码

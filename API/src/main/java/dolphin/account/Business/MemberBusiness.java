@@ -2,6 +2,7 @@ package dolphin.account.Business;
 
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberIdResponse;
+import dolphin.account.Response.MemberResponse;
 
 /**
  * @author dolphin
@@ -19,5 +20,12 @@ public interface MemberBusiness {
      * @param  request 登录信息
      * @return MemberIdResponse
      */
-    MemberIdResponse memberSignIn (MemberSignUpRequest request);
+    MemberResponse memberSignIn (MemberSignUpRequest request);
+
+    /**
+     * 查询用户信息
+     * @param memberToken 用户 Token
+     * @return MemberIdResponse
+     */
+    MemberResponse getMember (String memberToken);
 }

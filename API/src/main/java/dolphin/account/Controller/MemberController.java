@@ -3,13 +3,11 @@ package dolphin.account.Controller;
 import dolphin.account.Business.MemberBusiness;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberIdResponse;
+import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author dolphin
@@ -37,8 +35,14 @@ public class MemberController {
      * @return MemberIdResponse
      */
     @PostMapping("signin")
-    public Response<MemberIdResponse> memberSignIn (@RequestBody @Validated MemberSignUpRequest request)
+    public Response<MemberResponse> memberSignIn (@RequestBody @Validated MemberSignUpRequest request)
     {
         return Response.success(memberBusiness.memberSignIn(request));
+    }
+
+    @GetMapping("member")
+    public Response<MemberResponse> getMember (@RequestHeader("Token") String memberToken)
+    {
+        return Response.success(memberBusiness.getMember(memberToken));
     }
 }

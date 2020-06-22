@@ -1,5 +1,6 @@
 package dolphin.account.Business;
 
+import dolphin.account.Constant.CacheConstant;
 import dolphin.account.Constant.CommonConstant;
 import dolphin.account.Entity.Member;
 import dolphin.account.Exception.Common.BusinessException;
@@ -9,10 +10,16 @@ import dolphin.account.Library.RedisLibrary;
 import dolphin.account.Repository.MemberRepository;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberIdResponse;
+import dolphin.account.Response.MemberResponse;
 import dolphin.account.Service.MemberService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 /**
  * @author dolphin
@@ -73,7 +80,7 @@ public class MemberBusinessImpl implements MemberBusiness {
      * @return MemberIdResponse
      */
     @Override
-    public MemberIdResponse memberSignIn(MemberSignUpRequest request) {
+    public MemberResponse memberSignIn(MemberSignUpRequest request) {
         String username = request.getUsername();
         Member member   = memberRepository.findByUsername(username);
         // 用户不存在
@@ -89,15 +96,40 @@ public class MemberBusinessImpl implements MemberBusiness {
         if (! isPass) {
             throw new BusinessException(MemberException.ExceptionCode.PASSWORD_ERROR);
         }
+        // 设置缓存
+        String memberToken    = RandomStringUtils.randomAlphanumeric(CommonConstant.MEMBER_TOKEN_LENGTH);
+        String cacheKey       = redis.getCompleteKey(CacheConstant.MEMBER_KEY, CacheConstant.TOKEN_KEY, memberToken);
+        String cacheValue     = member.getId().toString();
+        Duration cacheTimeout = Duration.of(CacheConstant.TOKEN_TIMEOUT, ChronoUnit.SECONDS);
 
-        String cacheKey   = "member.token.1";
-        String cacheValue = "abc123";
+        redis.set(cacheKey, cacheValue, cacheTimeout);
 
-        redis.set(cacheKey, cacheValue);
+        return memberService.getMemberResponse(member);
+    }
 
-        MemberIdResponse memberIdResponse = new MemberIdResponse();
-        memberIdResponse.setMemberId(member.getId());
+    /**
+     * 查询用户信息
+     *
+     * @param memberToken 用户 Token
+     * @return MemberIdResponse
+     */
+    @Override
+    public MemberResponse getMember(String memberToken) {
+        String cacheKey   = redis.getCompleteKey(CacheConstant.MEMBER_KEY, CacheConstant.TOKEN_KEY, memberToken);
+        String cacheValue = redis.get(cacheKey);
 
-        return memberIdResponse;
+        if (null == cacheValue) {
+            throw new BusinessException(MemberException.ExceptionCode.TOKEN_NOT_EXIST);
+        }
+
+        Long memberId           = (long) Integer.parseInt(cacheValue);
+
+        Optional<Member> member = memberRepository.findById(memberId);
+
+        if (member.isPresent()) {
+            return memberService.getMemberResponse(member.get());
+        }
+
+        throw new BusinessException(MemberException.ExceptionCode.USER_NOT_EXIST);
     }
 }
