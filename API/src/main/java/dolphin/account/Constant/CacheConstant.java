@@ -27,5 +27,5 @@ public class CacheConstant {
     /**
      * Token 缓存过期时长：单位秒
      */
-    public static final Integer TOKEN_TIMEOUT      = 3600;
+    public static final Integer TOKEN_TIMEOUT      = 3600 * 8;
 }
