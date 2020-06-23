@@ -11,6 +11,7 @@ import dolphin.account.Repository.MemberRepository;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberIdResponse;
 import dolphin.account.Response.MemberResponse;
+import dolphin.account.Response.MemberTokenResponse;
 import dolphin.account.Service.MemberService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,7 @@ public class MemberBusinessImpl implements MemberBusiness {
      * @return MemberIdResponse
      */
     @Override
-    public MemberResponse memberSignIn(MemberSignUpRequest request) {
+    public MemberTokenResponse memberSignIn(MemberSignUpRequest request) {
         String username = request.getUsername();
         Member member   = memberRepository.findByUsername(username);
         // 用户不存在
@@ -104,7 +105,11 @@ public class MemberBusinessImpl implements MemberBusiness {
 
         redis.set(cacheKey, cacheValue, cacheTimeout);
 
-        return memberService.getMemberResponse(member);
+        MemberTokenResponse memberTokenResponse = new MemberTokenResponse();
+        memberTokenResponse.setMemberId(member.getId());
+        memberTokenResponse.setToken(memberToken);
+
+        return memberTokenResponse;
     }
 
     /**

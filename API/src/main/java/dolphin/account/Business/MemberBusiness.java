@@ -3,6 +3,7 @@ package dolphin.account.Business;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberIdResponse;
 import dolphin.account.Response.MemberResponse;
+import dolphin.account.Response.MemberTokenResponse;
 
 /**
  * @author dolphin
@@ -20,7 +21,7 @@ public interface MemberBusiness {
      * @param  request 登录信息
      * @return MemberIdResponse
      */
-    MemberResponse memberSignIn (MemberSignUpRequest request);
+    MemberTokenResponse memberSignIn (MemberSignUpRequest request);
 
     /**
      * 查询用户信息

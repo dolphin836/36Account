@@ -4,6 +4,7 @@ import dolphin.account.Business.MemberBusiness;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberIdResponse;
 import dolphin.account.Response.MemberResponse;
+import dolphin.account.Response.MemberTokenResponse;
 import dolphin.account.Response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -35,7 +36,7 @@ public class MemberController {
      * @return MemberIdResponse
      */
     @PostMapping("signin")
-    public Response<MemberResponse> memberSignIn (@RequestBody @Validated MemberSignUpRequest request)
+    public Response<MemberTokenResponse> memberSignIn (@RequestBody @Validated MemberSignUpRequest request)
     {
         return Response.success(memberBusiness.memberSignIn(request));
     }
