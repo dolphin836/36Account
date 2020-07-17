@@ -25,7 +25,7 @@ public class MemberController {
      * @return MemberIdResponse
      */
     @PostMapping("signup")
-    public Response<MemberIdResponse> memberSignUp (@RequestBody @Validated MemberSignUpRequest request)
+    public Response<MemberTokenResponse> memberSignUp (@RequestBody @Validated MemberSignUpRequest request)
     {
         return Response.success(memberBusiness.memberSignUp(request));
     }

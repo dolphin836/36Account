@@ -9,7 +9,6 @@ import dolphin.account.Exception.MemberException;
 import dolphin.account.Library.RedisLibrary;
 import dolphin.account.Repository.MemberRepository;
 import dolphin.account.Request.MemberSignUpRequest;
-import dolphin.account.Response.MemberIdResponse;
 import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.MemberTokenResponse;
 import dolphin.account.Service.MemberService;
@@ -43,7 +42,7 @@ public class MemberBusinessImpl implements MemberBusiness {
      * @return Response
      */
     @Override
-    public MemberIdResponse memberSignUp (MemberSignUpRequest request) {
+    public MemberTokenResponse memberSignUp (MemberSignUpRequest request) {
         String username  = request.getUsername();
         boolean isExists = memberRepository.existsMemberByUsername(username);
         // 用户名已存在
@@ -68,11 +67,19 @@ public class MemberBusinessImpl implements MemberBusiness {
         }
 
         Long memberId = member.getId();
+        // 设置缓存
+        String memberToken    = RandomStringUtils.randomAlphanumeric(CommonConstant.MEMBER_TOKEN_LENGTH);
+        String cacheKey       = redis.getCompleteKey(CacheConstant.MEMBER_KEY, CacheConstant.TOKEN_KEY, memberToken);
+        String cacheValue     = memberId.toString();
+        Duration cacheTimeout = Duration.of(CacheConstant.TOKEN_TIMEOUT, ChronoUnit.SECONDS);
 
-        MemberIdResponse memberIdResponse = new MemberIdResponse();
-        memberIdResponse.setMemberId(memberId);
+        redis.set(cacheKey, cacheValue, cacheTimeout);
 
-        return memberIdResponse;
+        MemberTokenResponse memberTokenResponse = new MemberTokenResponse();
+        memberTokenResponse.setMemberId(memberId);
+        memberTokenResponse.setToken(memberToken);
+
+        return memberTokenResponse;
     }
 
     /**
