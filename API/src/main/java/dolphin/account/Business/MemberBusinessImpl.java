@@ -2,24 +2,31 @@ package dolphin.account.Business;
 
 import dolphin.account.Constant.CacheConstant;
 import dolphin.account.Constant.CommonConstant;
+import dolphin.account.Constant.ImageContentTypeConstant;
 import dolphin.account.Entity.Member;
+import dolphin.account.Entity.MemberContent;
 import dolphin.account.Exception.Common.BusinessException;
 import dolphin.account.Exception.CommonException;
 import dolphin.account.Exception.MemberException;
 import dolphin.account.Library.RedisLibrary;
+import dolphin.account.Repository.MemberContentRepository;
 import dolphin.account.Repository.MemberRepository;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.MemberTokenResponse;
 import dolphin.account.Service.MemberService;
+import dolphin.account.Service.OSSService;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 
 /**
  * @author dolphin
@@ -34,6 +41,12 @@ public class MemberBusinessImpl implements MemberBusiness {
 
     @Autowired
     private RedisLibrary redis;
+
+    @Autowired
+    private OSSService ossService;
+
+    @Autowired
+    private MemberContentRepository memberContentRepository;
 
     /**
      * 用户注册
@@ -76,8 +89,10 @@ public class MemberBusinessImpl implements MemberBusiness {
         redis.set(cacheKey, cacheValue, cacheTimeout);
 
         MemberTokenResponse memberTokenResponse = new MemberTokenResponse();
-        memberTokenResponse.setMemberId(memberId);
         memberTokenResponse.setToken(memberToken);
+        //
+        MemberResponse memberResponse = memberService.getMemberResponse(memberId);
+        memberTokenResponse.setMember(memberResponse);
 
         return memberTokenResponse;
     }
@@ -113,8 +128,11 @@ public class MemberBusinessImpl implements MemberBusiness {
         redis.set(cacheKey, cacheValue, cacheTimeout);
 
         MemberTokenResponse memberTokenResponse = new MemberTokenResponse();
-        memberTokenResponse.setMemberId(member.getId());
         memberTokenResponse.setToken(memberToken);
+        //
+        Long memberId = member.getId();
+        MemberResponse memberResponse = memberService.getMemberResponse(memberId);
+        memberTokenResponse.setMember(memberResponse);
 
         return memberTokenResponse;
     }
@@ -134,14 +152,79 @@ public class MemberBusinessImpl implements MemberBusiness {
             throw new BusinessException(MemberException.ExceptionCode.TOKEN_NOT_EXIST);
         }
 
-        Long memberId           = (long) Integer.parseInt(cacheValue);
+        Long memberId = (long) Integer.parseInt(cacheValue);
+        // 返回用户信息
+        return memberService.getMemberResponse(memberId);
+    }
 
-        Optional<Member> member = memberRepository.findById(memberId);
+    /**
+     * 上传用户头像
+     *
+     * @param file 上传文件
+     * @param memberToken 用户 Token
+     * @return MemberIdResponse
+     */
+    @Override
+    public MemberResponse memberAvatar(MultipartFile file, String memberToken) {
+        // 获取 MemberId
+        String cacheKey   = redis.getCompleteKey(CacheConstant.MEMBER_KEY, CacheConstant.TOKEN_KEY, memberToken);
+        String cacheValue = redis.get(cacheKey);
 
-        if (member.isPresent()) {
-            return memberService.getMemberResponse(member.get());
+        if (null == cacheValue) {
+            throw new BusinessException(MemberException.ExceptionCode.TOKEN_NOT_EXIST);
+        }
+        // 上传文件不存在
+        if (file.isEmpty()) {
+            throw new BusinessException(CommonException.ExceptionCode.FILE_UPLOAD_EMPTY);
+        }
+        // 上传 ContentType 校验
+        String contentType = file.getContentType();
+
+        if (! ImageContentTypeConstant.isImage(contentType)) {
+            throw new BusinessException(CommonException.ExceptionCode.FILE_UPLOAD_TYPE_ERROR);
+        }
+        // 上传文件大小校验
+        long size = file.getSize();
+
+        if (size > CommonConstant.MEMBER_AVATAR_MAX_SIZE) {
+            throw new BusinessException(CommonException.ExceptionCode.FILE_UPLOAD_SIZE_ERROR);
+        }
+        // 上传文件名称
+        String fileName = file.getOriginalFilename();
+
+        if (null == fileName) {
+            throw new BusinessException(CommonException.ExceptionCode.FILE_UPLOAD_ERROR);
+        }
+        // 上传 OSS
+        LocalDate now         = LocalDate.now();
+        String fileExtension  = FilenameUtils.getExtension(fileName);
+        String randomFileName = RandomStringUtils.randomAlphanumeric(CommonConstant.UPLOAD_FILE_RANDOM_FILE_NAME);
+
+        String ossPathName    = String.format("%s/%s/%s/%s.%s", now.getYear(), now.getMonthValue(), now.getDayOfMonth(), randomFileName, fileExtension);
+
+        try {
+            ossService.uploadFile(CommonConstant.BUCKET_NAME, ossPathName, file.getInputStream());
+        } catch (IOException exception) {
+            throw new BusinessException(CommonException.ExceptionCode.FILE_UPLOAD_ERROR);
+        }
+        // MemberId
+        Long memberId = (long) Integer.parseInt(cacheValue);
+        // 更新用户头像
+        MemberContent memberContent = memberContentRepository.findByMemberId(memberId);
+
+        if (null == memberContent) {
+            memberContent = new MemberContent();
+            memberContent.setMemberId(memberId);
         }
 
-        throw new BusinessException(MemberException.ExceptionCode.USER_NOT_EXIST);
+        memberContent.setAvatar(ossPathName);
+
+        try {
+            memberContentRepository.save(memberContent);
+        } catch (Exception e) {
+            throw new BusinessException(CommonException.ExceptionCode.DB_ERROR, e.getMessage());
+        }
+        // 返回用户信息
+        return memberService.getMemberResponse(memberId);
     }
 }

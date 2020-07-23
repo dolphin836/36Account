@@ -3,6 +3,8 @@ package dolphin.account.Entity;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
@@ -11,9 +13,11 @@ import javax.persistence.*;
  */
 @Data
 @Entity
-@Table(name = "member")
+@Table(name = "member_content")
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class Member {
+@DynamicInsert
+@DynamicUpdate
+public class MemberContent {
     /**
      * MemberId，自增
      */
@@ -22,22 +26,27 @@ public class Member {
     private Long id;
 
     /**
-     * 用户名
+     * MemberId
      */
-    private String username;
+    private Long memberId;
 
     /**
-     * 密码
+     * 昵称
      */
-    private String password;
+    private String nickname;
 
     /**
-     * 用户注册客户端
+     * 邮箱
      */
-    private Byte client;
+    private String mail;
 
     /**
-     * 用户注册应用
+     * 头像
      */
-    private Byte application;
+    private String avatar;
+
+    /**
+     * 签名
+     */
+    private String sign;
 }

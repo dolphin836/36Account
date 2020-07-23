@@ -33,7 +33,23 @@ public interface CommonException {
         /**
          * 数据库错误
          */
-        DB_ERROR( ExceptionConstant.COMMON_MODULE_CODE + "04", "数据库错误：%s");
+        DB_ERROR( ExceptionConstant.COMMON_MODULE_CODE + "05", "数据库错误：%s"),
+        /**
+         * 上传文件为空
+         */
+        FILE_UPLOAD_EMPTY( ExceptionConstant.COMMON_MODULE_CODE + "06", "上传文件为空"),
+        /**
+         * 上传文件类型错误
+         */
+        FILE_UPLOAD_TYPE_ERROR( ExceptionConstant.COMMON_MODULE_CODE + "07", "不允许上传的文件类型"),
+        /**
+         * 上传文件大小错误
+         */
+        FILE_UPLOAD_SIZE_ERROR( ExceptionConstant.COMMON_MODULE_CODE + "08", "上传的文件大小超出限制"),
+        /**
+         * 文件上传错误
+         */
+        FILE_UPLOAD_ERROR( ExceptionConstant.COMMON_MODULE_CODE + "09", "文件上传失败：%s");
 
         /**
          * 状态码

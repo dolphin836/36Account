@@ -18,6 +18,18 @@
 		<java.version>1.8</java.version>
 	</properties>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.alibaba.cloud</groupId>
+				<artifactId>aliyun-spring-boot-dependencies</artifactId>
+				<version>1.0.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -76,9 +88,13 @@
 			<version>3.5</version>
 		</dependency>
 		<dependency>
-			<groupId>org.bitbucket.cowwoc</groupId>
-			<artifactId>diff-match-patch</artifactId>
-			<version>1.2</version>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>aliyun-oss-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
 		</dependency>
     </dependencies>
 

@@ -2,7 +2,6 @@ package dolphin.account.Controller;
 
 import dolphin.account.Business.MemberBusiness;
 import dolphin.account.Request.MemberSignUpRequest;
-import dolphin.account.Response.MemberIdResponse;
 import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.MemberTokenResponse;
 import dolphin.account.Response.Response;
@@ -41,6 +40,11 @@ public class MemberController {
         return Response.success(memberBusiness.memberSignIn(request));
     }
 
+    /**
+     * 查询用户信息
+     * @param memberToken Token
+     * @return MemberResponse
+     */
     @GetMapping("member")
     public Response<MemberResponse> getMember (@RequestHeader("Token") String memberToken)
     {

@@ -9,14 +9,6 @@ import lombok.Data;
  */
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class MemberTokenResponse {
-    /**
-     * Token
-     */
-    private String token;
+public class EmptyResponse {
 
-    /**
-     * 用户信息
-     */
-    MemberResponse member;
 }

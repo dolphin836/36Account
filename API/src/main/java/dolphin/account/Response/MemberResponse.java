@@ -19,4 +19,24 @@ public class MemberResponse {
      * 用户名
      */
     private String username;
+
+    /**
+     * 昵称
+     */
+    private String nickname;
+
+    /**
+     * 邮箱
+     */
+    private String mail;
+
+    /**
+     * 头像
+     */
+    private String avatar;
+
+    /**
+     * 签名
+     */
+    private String sign;
 }
