@@ -11,6 +11,7 @@ import dolphin.account.Exception.MemberException;
 import dolphin.account.Library.RedisLibrary;
 import dolphin.account.Repository.MemberContentRepository;
 import dolphin.account.Repository.MemberRepository;
+import dolphin.account.Request.MemberNicknameRequest;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.MemberTokenResponse;
@@ -145,14 +146,7 @@ public class MemberBusinessImpl implements MemberBusiness {
      */
     @Override
     public MemberResponse getMember(String memberToken) {
-        String cacheKey   = redis.getCompleteKey(CacheConstant.MEMBER_KEY, CacheConstant.TOKEN_KEY, memberToken);
-        String cacheValue = redis.get(cacheKey);
-
-        if (null == cacheValue) {
-            throw new BusinessException(MemberException.ExceptionCode.TOKEN_NOT_EXIST);
-        }
-
-        Long memberId = (long) Integer.parseInt(cacheValue);
+        Long memberId = memberService.getMemberIdByToken(memberToken);
         // 返回用户信息
         return memberService.getMemberResponse(memberId);
     }
@@ -167,12 +161,7 @@ public class MemberBusinessImpl implements MemberBusiness {
     @Override
     public MemberResponse memberAvatar(MultipartFile file, String memberToken) {
         // 获取 MemberId
-        String cacheKey   = redis.getCompleteKey(CacheConstant.MEMBER_KEY, CacheConstant.TOKEN_KEY, memberToken);
-        String cacheValue = redis.get(cacheKey);
-
-        if (null == cacheValue) {
-            throw new BusinessException(MemberException.ExceptionCode.TOKEN_NOT_EXIST);
-        }
+        Long memberId = memberService.getMemberIdByToken(memberToken);
         // 上传文件不存在
         if (file.isEmpty()) {
             throw new BusinessException(CommonException.ExceptionCode.FILE_UPLOAD_EMPTY);
@@ -207,8 +196,6 @@ public class MemberBusinessImpl implements MemberBusiness {
         } catch (IOException exception) {
             throw new BusinessException(CommonException.ExceptionCode.FILE_UPLOAD_ERROR);
         }
-        // MemberId
-        Long memberId = (long) Integer.parseInt(cacheValue);
         // 更新用户头像
         MemberContent memberContent = memberContentRepository.findByMemberId(memberId);
 
@@ -218,6 +205,35 @@ public class MemberBusinessImpl implements MemberBusiness {
         }
 
         memberContent.setAvatar(ossPathName);
+
+        try {
+            memberContentRepository.save(memberContent);
+        } catch (Exception e) {
+            throw new BusinessException(CommonException.ExceptionCode.DB_ERROR, e.getMessage());
+        }
+        // 返回用户信息
+        return memberService.getMemberResponse(memberId);
+    }
+
+    /**
+     * 更新用户昵称
+     *
+     * @param memberToken 用户 Token
+     * @param request     Body
+     * @return MemberResponse
+     */
+    @Override
+    public MemberResponse updateMemberNickname(String memberToken, MemberNicknameRequest request) {
+        // 获取 MemberId
+        Long memberId = memberService.getMemberIdByToken(memberToken);
+        // 更新昵称
+        MemberContent memberContent = memberContentRepository.findByMemberId(memberId);
+
+        if (null == memberContent) {
+            memberContent = new MemberContent();
+        }
+
+        memberContent.setNickname(request.getNickname());
 
         try {
             memberContentRepository.save(memberContent);

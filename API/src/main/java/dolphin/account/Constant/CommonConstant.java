@@ -32,7 +32,7 @@ public class CommonConstant {
     /**
      * 用户头像图片处理参数
      */
-    public static final String MEMBER_AVATAR_STYLE = "image/resize,m_fill,w_128,h_128";
+    public static final String MEMBER_AVATAR_STYLE = "image/resize,m_fill,w_200,h_200";
 
     /**
      * 用户头像授权访问有效时间：24 小时

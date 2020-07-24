@@ -1,6 +1,7 @@
 package dolphin.account.Controller;
 
 import dolphin.account.Business.MemberBusiness;
+import dolphin.account.Request.MemberNicknameRequest;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.MemberTokenResponse;
@@ -49,5 +50,17 @@ public class MemberController {
     public Response<MemberResponse> getMember (@RequestHeader("Token") String memberToken)
     {
         return Response.success(memberBusiness.getMember(memberToken));
+    }
+
+    /**
+     * 更新用户昵称
+     * @param memberToken Token
+     * @param request     Body
+     * @return MemberResponse
+     */
+    @PostMapping("/nickname")
+    public Response<MemberResponse> updateMemberNickname (@RequestHeader("Token") String memberToken, @RequestBody @Validated MemberNicknameRequest request)
+    {
+        return Response.success(memberBusiness.updateMemberNickname(memberToken, request));
     }
 }

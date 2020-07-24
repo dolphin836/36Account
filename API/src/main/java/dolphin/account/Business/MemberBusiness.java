@@ -1,5 +1,6 @@
 package dolphin.account.Business;
 
+import dolphin.account.Request.MemberNicknameRequest;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.MemberTokenResponse;
@@ -37,4 +38,12 @@ public interface MemberBusiness {
      * @return MemberIdResponse
      */
     MemberResponse memberAvatar (MultipartFile file, String memberToken);
+
+    /**
+     * 更新用户昵称
+     * @param memberToken 用户 Token
+     * @param request Body
+     * @return MemberResponse
+     */
+    MemberResponse updateMemberNickname (String memberToken, MemberNicknameRequest request);
 }

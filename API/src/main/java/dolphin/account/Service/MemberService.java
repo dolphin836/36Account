@@ -1,10 +1,12 @@
 package dolphin.account.Service;
 
+import dolphin.account.Constant.CacheConstant;
 import dolphin.account.Constant.CommonConstant;
 import dolphin.account.Entity.Member;
 import dolphin.account.Entity.MemberContent;
 import dolphin.account.Exception.Common.BusinessException;
 import dolphin.account.Exception.MemberException;
+import dolphin.account.Library.RedisLibrary;
 import dolphin.account.Repository.MemberContentRepository;
 import dolphin.account.Repository.MemberRepository;
 import dolphin.account.Response.MemberResponse;
@@ -30,6 +32,9 @@ public class MemberService {
 
     @Autowired
     private OSSService ossService;
+
+    @Autowired
+    private RedisLibrary redis;
 
     /**
      * 设置会员实体的客户端和应用
@@ -67,5 +72,16 @@ public class MemberService {
         }
 
         throw new BusinessException(MemberException.ExceptionCode.USER_NOT_EXIST);
+    }
+
+    public Long getMemberIdByToken (String memberToken) {
+        String cacheKey   = redis.getCompleteKey(CacheConstant.MEMBER_KEY, CacheConstant.TOKEN_KEY, memberToken);
+        String cacheValue = redis.get(cacheKey);
+
+        if (null == cacheValue) {
+            throw new BusinessException(MemberException.ExceptionCode.TOKEN_NOT_EXIST);
+        }
+
+        return  (long) Integer.parseInt(cacheValue);
     }
 }
