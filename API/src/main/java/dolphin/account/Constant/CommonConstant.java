@@ -35,7 +35,7 @@ public class CommonConstant {
     public static final String MEMBER_AVATAR_STYLE = "image/resize,m_fill,w_200,h_200";
 
     /**
-     * 用户头像授权访问有效时间：24 小时
+     * 用户头像授权访问有效时间：30 天
      */
-    public static final Integer MEMBER_AVATAR_EXPIRATION = 24 * 3600 * 1000;
+    public static final Long MEMBER_AVATAR_EXPIRATION = 30 * 24 * 3600 * 1000L;
 }

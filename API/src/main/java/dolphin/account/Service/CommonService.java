@@ -1,5 +1,7 @@
 package dolphin.account.Service;
 
+import dolphin.account.Constant.ApplicationConstant;
+import dolphin.account.Constant.ClientConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,21 +17,29 @@ public class CommonService {
 
     /**
      * 获取 Header Client 参数
-     * @return Byte
+     * @return ClientConstant
      */
-    public Byte getClient () {
-        String client = request.getHeader("Client");
+    public ClientConstant getClient () {
+        String client      = request.getHeader("Client");
 
-        return (byte) Integer.parseInt(client);
+        System.out.print(client);
+
+        Integer clientCode = Integer.parseInt(client);
+
+        return ClientConstant.getClient(clientCode);
     }
 
     /**
      * 获取 Header Application 参数
-     * @return Byte
+     * @return ApplicationConstant
      */
-    public Byte getApplication () {
-        String application = request.getHeader("Application");
+    public ApplicationConstant getApplication () {
+        String application      = request.getHeader("Application");
 
-        return (byte) Integer.parseInt(application);
+        System.out.print(application);
+
+        Integer applicationCode = Integer.parseInt(application);
+
+        return ApplicationConstant.getApplication(applicationCode);
     }
 }

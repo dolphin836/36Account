@@ -6,26 +6,22 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author dolphin
  */
 @Entity
-@Table(name = "member")
+@Table(name = "member_sign_in")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Member extends CommonEntity {
+public class MemberSignIn extends CommonEntity {
     /**
-     * 用户名
+     * MemberId
      */
-    private String username;
-
-    /**
-     * 密码
-     */
-    private String password;
+    private Long memberId;
 
     /**
      * 用户注册客户端

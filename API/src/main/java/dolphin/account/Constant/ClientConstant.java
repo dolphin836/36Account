@@ -1,5 +1,7 @@
 package dolphin.account.Constant;
 
+import dolphin.account.Exception.Common.BusinessException;
+import dolphin.account.Exception.CommonException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -73,5 +75,15 @@ public enum ClientConstant {
         }
 
         return false;
+    }
+
+    public static ClientConstant getClient (Integer code) {
+        for (ClientConstant clientConstant : ClientConstant.values()) {
+            if (clientConstant.getCode().equals(code)) {
+                return clientConstant;
+            }
+        }
+
+        throw new BusinessException(CommonException.ExceptionCode.HTTP_HEADER_CLIENT_IS_ERROR);
     }
 }

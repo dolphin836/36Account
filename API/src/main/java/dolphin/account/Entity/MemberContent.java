@@ -1,30 +1,20 @@
 package dolphin.account.Entity;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 /**
  * @author dolphin
  */
-@Data
 @Entity
 @Table(name = "member_content")
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-@DynamicInsert
-@DynamicUpdate
-public class MemberContent {
-    /**
-     * MemberId，自增
-     */
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
-
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class MemberContent extends CommonEntity {
     /**
      * MemberId
      */

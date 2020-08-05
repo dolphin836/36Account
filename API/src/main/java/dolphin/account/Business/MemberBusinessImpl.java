@@ -5,17 +5,20 @@ import dolphin.account.Constant.CommonConstant;
 import dolphin.account.Constant.ImageContentTypeConstant;
 import dolphin.account.Entity.Member;
 import dolphin.account.Entity.MemberContent;
+import dolphin.account.Entity.MemberSignIn;
 import dolphin.account.Exception.Common.BusinessException;
 import dolphin.account.Exception.CommonException;
 import dolphin.account.Exception.MemberException;
 import dolphin.account.Library.RedisLibrary;
 import dolphin.account.Repository.MemberContentRepository;
 import dolphin.account.Repository.MemberRepository;
+import dolphin.account.Repository.MemberSignInRepository;
 import dolphin.account.Request.MemberNicknameRequest;
 import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.MemberTokenResponse;
 import dolphin.account.Service.MemberService;
+import dolphin.account.Service.MemberSignInService;
 import dolphin.account.Service.OSSService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -48,6 +51,12 @@ public class MemberBusinessImpl implements MemberBusiness {
 
     @Autowired
     private MemberContentRepository memberContentRepository;
+
+    @Autowired
+    private MemberSignInRepository memberSignInRepository;
+
+    @Autowired
+    private MemberSignInService memberSignInService;
 
     /**
      * 用户注册
@@ -111,6 +120,8 @@ public class MemberBusinessImpl implements MemberBusiness {
         if (null == member) {
             throw new BusinessException(MemberException.ExceptionCode.USERNAME_NOT_EXIST, username);
         }
+        // MemberId
+        Long memberId = member.getId();
         // 密码验证
         String enPassword             = member.getPassword();
         String password               = request.getPassword();
@@ -123,15 +134,24 @@ public class MemberBusinessImpl implements MemberBusiness {
         // 设置缓存
         String memberToken    = RandomStringUtils.randomAlphanumeric(CommonConstant.MEMBER_TOKEN_LENGTH);
         String cacheKey       = redis.getCompleteKey(CacheConstant.MEMBER_KEY, CacheConstant.TOKEN_KEY, memberToken);
-        String cacheValue     = member.getId().toString();
+        String cacheValue     = memberId.toString();
         Duration cacheTimeout = Duration.of(CacheConstant.TOKEN_TIMEOUT, ChronoUnit.SECONDS);
 
         redis.set(cacheKey, cacheValue, cacheTimeout);
 
         MemberTokenResponse memberTokenResponse = new MemberTokenResponse();
         memberTokenResponse.setToken(memberToken);
+        // 登录记录
+        MemberSignIn memberSignIn = new MemberSignIn();
+        memberSignIn.setMemberId(memberId);
+        memberSignInService.setMemberClientAndApplication(memberSignIn);
+
+        try {
+            memberSignInRepository.save(memberSignIn);
+        } catch (Exception e) {
+            throw new BusinessException(CommonException.ExceptionCode.DB_ERROR, e.getMessage());
+        }
         //
-        Long memberId = member.getId();
         MemberResponse memberResponse = memberService.getMemberResponse(memberId);
         memberTokenResponse.setMember(memberResponse);
 

@@ -1,5 +1,7 @@
 package dolphin.account.Constant;
 
+import dolphin.account.Exception.Common.BusinessException;
+import dolphin.account.Exception.CommonException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,12 +22,17 @@ public enum ApplicationConstant {
     /**
      * 36password.com
      */
-    PASSWORD ( 1, "36password.com"),
+    PASSWORD ( 2, "36password.com"),
 
     /**
      * 36awesome.com
      */
-    AWESOME ( 2, "36awesome.com");
+    AWESOME ( 3, "36awesome.com"),
+
+    /**
+     * 36college.com
+     */
+    COLLEGE ( 4, "36college.com");
 
     /**
      * 编码
@@ -58,5 +65,15 @@ public enum ApplicationConstant {
         }
 
         return false;
+    }
+
+    public static ApplicationConstant getApplication (Integer code) {
+        for (ApplicationConstant applicationConstant : ApplicationConstant.values()) {
+            if (applicationConstant.getCode().equals(code)) {
+                return applicationConstant;
+            }
+        }
+
+        throw new BusinessException(CommonException.ExceptionCode.HTTP_HEADER_APPLICATION_IS_ERROR);
     }
 }
