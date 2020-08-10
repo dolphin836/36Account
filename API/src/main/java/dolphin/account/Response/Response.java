@@ -1,6 +1,7 @@
 package dolphin.account.Response;
 
 import dolphin.account.Exception.Common.BusinessException;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import lombok.Data;
 
@@ -14,16 +15,19 @@ public class Response<T> implements Serializable {
     /**
      * 状态码
      */
+    @Schema(description = "状态码")
     private String code;
 
     /**
      * 提示消息
      */
+    @Schema(description = "消息")
     private String message;
 
     /**
      * 数据
      */
+    @Schema(description = "数据")
     private T data;
 
     /**

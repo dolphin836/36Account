@@ -4,6 +4,7 @@ import dolphin.account.Business.MemberBusiness;
 import dolphin.account.Response.EmptyResponse;
 import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.Response;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RequestMapping("upload")
 @RestController
+@Tag(name = "文件上传")
 public class FileUploadController {
     @Autowired
     private MemberBusiness memberBusiness;

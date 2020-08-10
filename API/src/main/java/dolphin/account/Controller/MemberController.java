@@ -6,6 +6,8 @@ import dolphin.account.Request.MemberSignUpRequest;
 import dolphin.account.Response.MemberResponse;
 import dolphin.account.Response.MemberTokenResponse;
 import dolphin.account.Response.Response;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @author dolphin
  */
 @RestController
+@Tag(name = "用户")
 public class MemberController {
 
     @Autowired
@@ -25,6 +28,7 @@ public class MemberController {
      * @return MemberIdResponse
      */
     @PostMapping("signup")
+    @Operation(summary = "用户注册")
     public Response<MemberTokenResponse> memberSignUp (@RequestBody @Validated MemberSignUpRequest request)
     {
         return Response.success(memberBusiness.memberSignUp(request));
@@ -36,6 +40,7 @@ public class MemberController {
      * @return MemberIdResponse
      */
     @PostMapping("signin")
+    @Operation(summary = "用户登录")
     public Response<MemberTokenResponse> memberSignIn (@RequestBody @Validated MemberSignUpRequest request)
     {
         return Response.success(memberBusiness.memberSignIn(request));
@@ -47,6 +52,7 @@ public class MemberController {
      * @return MemberResponse
      */
     @GetMapping("member")
+    @Operation(summary = "用户信息")
     public Response<MemberResponse> getMember (@RequestHeader("Token") String memberToken)
     {
         return Response.success(memberBusiness.getMember(memberToken));
@@ -59,6 +65,7 @@ public class MemberController {
      * @return MemberResponse
      */
     @PostMapping("/nickname")
+    @Operation(summary = "修改用户昵称")
     public Response<MemberResponse> updateMemberNickname (@RequestHeader("Token") String memberToken, @RequestBody @Validated MemberNicknameRequest request)
     {
         return Response.success(memberBusiness.updateMemberNickname(memberToken, request));
