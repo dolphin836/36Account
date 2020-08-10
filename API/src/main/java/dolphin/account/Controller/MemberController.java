@@ -52,7 +52,7 @@ public class MemberController {
      * @return MemberResponse
      */
     @GetMapping("member")
-    @Operation(summary = "用户信息")
+    @Operation(summary = "获取单个用户信息")
     public Response<MemberResponse> getMember (@RequestHeader("Token") String memberToken)
     {
         return Response.success(memberBusiness.getMember(memberToken));
