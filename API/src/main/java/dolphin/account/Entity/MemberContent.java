@@ -1,8 +1,6 @@
 package dolphin.account.Entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -14,6 +12,8 @@ import javax.persistence.*;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Builder
+@NoArgsConstructor
 public class MemberContent extends CommonEntity {
     /**
      * MemberId

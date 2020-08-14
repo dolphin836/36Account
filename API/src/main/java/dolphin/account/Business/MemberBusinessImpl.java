@@ -77,9 +77,7 @@ public class MemberBusinessImpl implements MemberBusiness {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(CommonConstant.PASSWORD_HASH_LENGTH);
         String enPassword             = encoder.encode(password);
         // 设置 Member 实体
-        Member member = new Member();
-        member.setUsername(request.getUsername());
-        member.setPassword(enPassword);
+        Member member = Member.builder().username(request.getUsername()).password(enPassword).build();
         // 设置客户端和应用
         memberService.setMemberClientAndApplication(member);
 

@@ -2,9 +2,7 @@ package dolphin.account.Entity;
 
 import dolphin.account.Constant.ApplicationConstant;
 import dolphin.account.Constant.ClientConstant;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -16,6 +14,8 @@ import javax.persistence.*;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Builder
+@NoArgsConstructor
 public class Member extends CommonEntity {
     /**
      * 用户名
